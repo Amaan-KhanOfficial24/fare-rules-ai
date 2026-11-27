@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Reissue &amp; Refund Calculator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Reissue &amp; Refund Calculator</h1>
+      <p class="sub">Gemini reads the ticket and the airline's fare rules. The page calculates the charges.</p>
+    </div>
+  </header>
+
+  <div class="grid">
+    <!-- INPUTS -->
+    <section class="card" aria-label="Inputs">
+      <div class="keyrow">
+        <label>Gemini API key
+          <input id="apiKey" type="password" placeholder="Paste your free key from aistudio.google.com" autocomplete="off">
+        </label>
+        <button class="ghost" id="saveKey" type="button">Save in this browser</button>
+      </div>
+      <div class="row">
+        <label>Model
+          <input id="model" value="gemini-3.8-flash">
+        </label>
+        <label>Request date &amp; time
+          <input id="reqTime" type="datetime-local">
+          <span class="hint">When the agent asks for the change or refund</span>
+        </label>
+      </div>
+
+      <div style="display:grid;gap:8px">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:4px 8px;flex-wrap:wrap">
+          <span class="label">Ticket copy</span>
+          <span class="hint" style="flex-basis:100%;order:3">Airline, fare type, sectors, dates and passengers are read from the ticket. Fill the fields below only to override.</span>
+          <div class="tabs" role="group" aria-label="Ticket input type">
+            <button type="button" id="tabText" aria-pressed="true">Paste text</button>
+            <button type="button" id="tabFile" aria-pressed="false">Upload PDF / image</button>
+          </div>
+        </div>
+        <textarea id="ticketText" rows="11"></textarea>
+        <label id="fileWrap" hidden>Ticket file
+          <input id="ticketFile" type="file" accept="application/pdf,image/png,image/jpeg,image/webp">
+        </label>
+        <span style="display:flex;gap:6px;flex-wrap:wrap">
+          <button class="ghost" type="button" id="loadFZ">Load flydubai sample ticket</button>
+          <button class="ghost" type="button" id="loadXY">Load flynas sample ticket</button>
+          <button class="ghost" type="button" id="load6E">Load IndiGo sample ticket</button>
+        </span>
+      </div>
+
+      <div class="row">
+        <label><span>Airline <span class="hint">(optional)</span></span>
+          <input id="airline" placeholder="From ticket if blank">
+        </label>
+        <label><span>Fare type <span class="hint">(optional)</span></span>
+          <input id="fareType" placeholder="From ticket if blank" list="fareTypes">
+          <datalist id="fareTypes"><option>Lite</option><option>Value</option><option>Flex</option><option>Business</option></datalist>
+        </label>
+        <label><span>No. of pax <span class="hint">(optional)</span></span>
+          <input id="pax" type="number" min="1" max="9" placeholder="From ticket">
+        </label>
+      </div>
+
+      <div style="display:grid;gap:6px">
+        <span class="label">Airline fare rules</span>
+        <span class="hint">No fare rules are stored in this page. Each time you calculate, Gemini reads the rules live from the airline's official website, for the airline and fare type on the ticket.</span>
+        <label><span>Rule page link <span class="hint">(optional)</span></span>
+          <textarea id="ruleUrls" rows="2" placeholder="Leave blank to use the airline's official fare-rules page. Or paste a link, one per line."></textarea>
+        </label>
+        <label><span>Airline fee sheet <span class="hint">(optional: .xlsx, .xls or .csv from the airline)</span></span>
+          <input id="sheetFile" type="file" accept=".xlsx,.xls,.csv">
+          <span class="hint" id="sheetInfo">Used only to find the sector's zone/region and to cross-check. The amounts always come from the live website. The sheet stays in this browser tab and is not saved.</span>
+        </label>
+        <details>
+          <summary class="hint" style="cursor:pointer">Airline page can't be read? Paste the rules instead</summary>
+          <textarea id="rulesText" rows="7" style="margin-top:6px" placeholder="Only if the live read fails: copy the change and cancellation section from the airline's website and paste it here."></textarea>
+        </details>
+      </div>
+
+      <label>Fare difference for reissue (optional, total)
+        <input id="fareDiff" type="number" min="0" step="0.01" placeholder="0">
+      </label>
+
+      <button id="run" type="button">Calculate charges</button>
+      <div id="status" class="status" role="status"></div>
+    </section>
+
+    <!-- RESULT -->
+    <section class="card" aria-label="Result" id="result">
+      <div class="empty">
+        <p><strong>Your result appears here.</strong></p>
+        <p>A sample flydubai ticket is filled in. Paste your Gemini key and click <em>Calculate charges</em>. The fare rules will be read live from flydubai's website.</p>
+      </div>
+    </section>
+  </div>
+  <footer style="margin-top:20px;font-size:.78rem;color:var(--muted);max-width:75ch">
+    Demo only. Fare rules change often and can vary by route, market and booking channel. Always verify charges with the airline before quoting.
+    Sample tickets are made up. Airline names are used only to identify their published rules; this project is not affiliated with any airline.
+    No fare rules are stored in this page; they are read live from the airline website on every calculation.
+    Your Gemini key is sent only to Google and is stored only in your browser if you choose to save it.
+  </footer>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="js/samples.js"></script>
+<script src="js/airlines.js"></script>
+<script src="js/calculator.js"></script>
+<script src="js/gemini.js"></script>
+<script src="js/sheet.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
